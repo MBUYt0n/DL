@@ -9,11 +9,18 @@ Original file is located at
 
 import torch
 import torchvision
+import tensorflow.keras.datasets
+from torch.utils.tensorboard import SummaryWriter
+import torch.nn as nn
+from tqdm import tqdm
+
+
+writer = SummaryWriter()
 
 # train = torchvision.datasets.MNIST(root="./", train=True, download=True)
 # test = torchvision.datasets.MNIST(root="./", train=False, download=True)
 
-import tensorflow.keras.datasets
+
 (x_train, y_train), (x_test, y_test) = tensorflow.keras.datasets.mnist.load_data()
 x_train = torch.tensor(x_train, dtype=torch.float32)
 y_train = torch.tensor(y_train, dtype=torch.uint8)
@@ -27,15 +34,18 @@ x_train[0].size()
 
 y_train.dtype
 
-trainloader = torch.utils.data.DataLoader(torch.utils.data.TensorDataset(x_train, y_train), batch_size=20, shuffle=True)
-validloader = torch.utils.data.DataLoader(torch.utils.data.TensorDataset(x_test, y_test), batch_size=20, shuffle=True)
+trainloader = torch.utils.data.DataLoader(
+    torch.utils.data.TensorDataset(x_train, y_train), batch_size=20, shuffle=True
+)
+validloader = torch.utils.data.DataLoader(
+    torch.utils.data.TensorDataset(x_test, y_test), batch_size=20, shuffle=True
+)
 
 for i, j in enumerate(trainloader):
-  print(i)
-  print(j[0][0].size())
-  break
+    print(i)
+    print(j[0][0].size())
+    break
 
-import torch.nn as nn
 
 model = nn.Sequential(
     nn.Linear(784, 100),
@@ -44,16 +54,12 @@ model = nn.Sequential(
     nn.Sigmoid(),
     nn.Linear(100, 100),
     nn.Sigmoid(),
-    nn.Linear(100, 10)
+    nn.Linear(100, 10),
 ).to("cuda")
 
 loss = nn.CrossEntropyLoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=0.003)
 
-# from torch.utils.tensorboard import SummaryWriter
-# writer = SummaryWriter()
-
-from tqdm import tqdm
 
 for i in range(100):
     t = 0
