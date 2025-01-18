@@ -13,7 +13,7 @@ import torchvision
 # train = torchvision.datasets.MNIST(root="./", train=True, download=True)
 # test = torchvision.datasets.MNIST(root="./", train=False, download=True)
 
-import tensorflow
+import tensorflow.keras.datasets
 (x_train, y_train), (x_test, y_test) = tensorflow.keras.datasets.mnist.load_data()
 x_train = torch.tensor(x_train, dtype=torch.float32)
 y_train = torch.tensor(y_train, dtype=torch.uint8)
@@ -56,6 +56,7 @@ optimizer = torch.optim.Adam(model.parameters(), lr=0.003)
 from tqdm import tqdm
 
 for i in range(100):
+    t = 0
     model.train()
     train_progress = tqdm(
         enumerate(trainloader), desc=f"Epoch {i} - Training", total=len(trainloader)
@@ -68,10 +69,15 @@ for i in range(100):
         l = loss(output, label)
         l.backward()
         optimizer.step()
-        # Update tqdm with current loss
-        train_progress.set_postfix(loss=l.item())
+        # Accumulate loss
+        t += l.item()
+        # Update tqdm with average loss up to the current batch
+        train_progress.set_postfix(loss=t / (j + 1))
+    # Calculate average loss for the epoch
+    t /= len(trainloader)
     # writer.add_scalar("Loss/train", t, i)
 
+    t = 0
     model.eval()
     val_progress = tqdm(
         enumerate(validloader), desc=f"Epoch {i} - Validation", total=len(validloader)
@@ -81,8 +87,11 @@ for i in range(100):
         image, label = image.to("cuda"), label.to("cuda")
         output = model(image.view(-1, 784))
         l = loss(output, label)
-        # Update tqdm with current validation loss
-        val_progress.set_postfix(loss=l.item())
+        t += l.item()
+        # Update tqdm with average validation loss up to the current batch
+        val_progress.set_postfix(loss=t / (j + 1))
+    # Calculate average validation loss for the epoch
+    t /= len(validloader)
     # writer.add_scalar("Loss/val", t, i)
     # writer.flush()
 
