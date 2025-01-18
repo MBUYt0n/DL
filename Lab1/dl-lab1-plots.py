@@ -43,7 +43,9 @@ def model_maker1():
     return model
 
 
-def train_loop(model, optimizer, loss, run_name, trainloader=trainloader, validloader=validloader):
+def train_loop(
+    model, optimizer, loss, run_name, trainloader=trainloader, validloader=validloader
+):
     writer = SummaryWriter(log_dir=f"runs/{run_name}")
     for i in range(50):
         t = 0
@@ -88,6 +90,7 @@ def one_hot_encode(labels, num_classes=10):
     labels = labels.type(torch.long)
     return F.one_hot(labels, num_classes=num_classes).float()
 
+
 # 1,2,3
 def layers_and_neurons():
     for i in [1, 2, 3]:
@@ -97,6 +100,7 @@ def layers_and_neurons():
             loss = nn.CrossEntropyLoss()
             optimizer = torch.optim.Adam(model.parameters(), lr=0.003)
             train_loop(model, optimizer, loss, f"layers_{i}_neurons_{j}")
+
 
 # 4
 def optimizers():
@@ -114,6 +118,7 @@ def optimizers():
         else:
             optimizer = torch.optim.SGD(model.parameters(), lr=0.001)
         train_loop(model, optimizer, nn.CrossEntropyLoss(), i)
+
 
 # 5
 def sigmoid_tanh():
@@ -143,6 +148,7 @@ def sigmoid_tanh():
             name,
         )
 
+
 # 6
 def cross_entropy():
     losses = [torch.nn.CrossEntropyLoss()]
@@ -163,15 +169,11 @@ def mse():
         nn.Linear(100, 100),
         nn.Sigmoid(),
         nn.Linear(100, 10),
-        nn.Softmax(dim=1),
     ).to("cuda")
 
     loss = nn.MSELoss()
-
-    optimizer = torch.optim.Adam(model.parameters(), lr=0.003)
-    model = model_maker1()
-
-    writer = SummaryWriter(log_dir=f"runs/MSELoss")
+    optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
+    writer = SummaryWriter(log_dir=f"runs/MSELoss1")
     for i in range(50):
         train_loss = 0
         model.train()
@@ -181,8 +183,9 @@ def mse():
         for j, (images, labels) in train_progress:
             images, labels = images.to("cuda"), labels.to("cuda")
             optimizer.zero_grad()
-            outputs = model(images.view(-1, 784))
+            outputs = nn.functional.softmax(model(images.view(-1, 784)), dim=1)
             labels_one_hot = one_hot_encode(labels, num_classes=10)
+
             l = loss(outputs, labels_one_hot)
             l.backward()
             optimizer.step()
@@ -201,7 +204,7 @@ def mse():
             for j, (images, labels) in val_progress:
                 images, labels = images.to("cuda"), labels.to("cuda")
                 labels_one_hot = one_hot_encode(labels, num_classes=10)
-                outputs = model(images.view(-1, 784))
+                outputs = nn.functional.softmax(model(images.view(-1, 784)), dim=1)
                 l = loss(outputs, labels_one_hot)
                 val_loss += l.item()
                 val_progress.set_postfix(loss=val_loss / (j + 1))
@@ -210,6 +213,7 @@ def mse():
 
         writer.flush()
     writer.close()
+
 
 # 7
 def batch_sizes():
@@ -228,5 +232,5 @@ def batch_sizes():
             torch.nn.CrossEntropyLoss(),
             f"{i}",
             trainloader,
-            validloader
+            validloader,
         )
