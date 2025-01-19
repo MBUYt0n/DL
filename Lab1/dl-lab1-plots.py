@@ -18,7 +18,7 @@ validloader = torch.utils.data.DataLoader(
     torch.utils.data.TensorDataset(x_test, y_test), batch_size=20, shuffle=True
 )
 
-
+# for variable model sizes
 def model_maker(layers, neurons):
     model_layers = []
     for i in range(layers):
@@ -31,7 +31,7 @@ def model_maker(layers, neurons):
     model = nn.Sequential(*model_layers)
     return model
 
-
+# 2 layers 100 neurons
 def model_maker1():
     model = nn.Sequential(
         nn.Linear(784, 100),
@@ -84,7 +84,7 @@ def train_loop(
         writer.flush()
     writer.close()
 
-
+# for mse
 def one_hot_encode(labels, num_classes=10):
     """Convert integer labels to one-hot encoded vectors."""
     labels = labels.type(torch.long)
