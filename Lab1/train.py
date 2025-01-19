@@ -1,3 +1,5 @@
+# Code to generate submission.csv file
+
 import torch
 import tensorflow
 import torch.nn as nn

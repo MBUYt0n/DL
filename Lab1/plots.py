@@ -1,3 +1,5 @@
+# code to generate plots
+
 import torch
 import tensorflow
 import torch.nn as nn
@@ -18,6 +20,7 @@ validloader = torch.utils.data.DataLoader(
     torch.utils.data.TensorDataset(x_test, y_test), batch_size=20, shuffle=True
 )
 
+
 # for variable model sizes
 def model_maker(layers, neurons):
     model_layers = []
@@ -30,6 +33,7 @@ def model_maker(layers, neurons):
     model_layers.append(nn.Linear(neurons, 10))
     model = nn.Sequential(*model_layers)
     return model
+
 
 # 2 layers 100 neurons
 def model_maker1():
@@ -83,6 +87,7 @@ def train_loop(
         writer.add_scalar("Loss/Validation", t, i)
         writer.flush()
     writer.close()
+
 
 # for mse
 def one_hot_encode(labels, num_classes=10):
