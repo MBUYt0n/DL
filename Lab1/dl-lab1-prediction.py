@@ -77,6 +77,7 @@ for i in range(100):
     t /= len(validloader)
     lr_scheduler.step(t)
 
+# Test accuracy
 t = 0
 for j, k in zip(x_test, y_test):
     image = j.to("cuda")
@@ -90,7 +91,7 @@ for j, k in zip(x_test, y_test):
 
 print(t / len(y_test))
 
-
+# cconfusion matrix
 num_classes = 10
 all_preds = []
 all_labels = []
@@ -123,6 +124,7 @@ plt.title("Confusion Matrix")
 plt.show()
 
 
+# Submission
 outputs = []
 for j, k in zip(x_test, y_test):
     image = j.to("cuda")
