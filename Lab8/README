@@ -1,0 +1,6 @@
+This zip contains the report and 4 ipynb files. 
+
+DL_Lab8_noatten-unidir.ipynb contains the unidirectional LSTM with no attention and BPE.
+DL_Lab8_wordlevel.ipynb contains the unidirectional LSTM with attention and word level tokenization.
+DL_Lab8_attention_unidir.ipynb contains the unidirectional LSTM with attention and BPE.
+DL_Lab8_noatten-bidir.ipynb contains the bidirectional LSTM with attention and BPE.
